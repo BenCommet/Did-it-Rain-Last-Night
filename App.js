@@ -1,11 +1,21 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import {getRainfall} from './services/weather';
 
 export default function App() {
+  const pressRain = async () => {
+    let test = await getRainfall();
+    console.log('testy: ', test);
+  }
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+      <TouchableOpacity onPress={pressRain}>
+        <Text>
+        Get the Rain boi
+        </Text>
+      </TouchableOpacity>
       <StatusBar style="auto" />
     </View>
   );
