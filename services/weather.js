@@ -1,34 +1,38 @@
+import {metersToInches} from './units'
+const offset_1_hour = 3600000;
 const offset_24_hours = 86400000;
 
-export const getRainfall = async function(){
+const getOffsetTime = function(offset){
     let currentTime = new Date();
     currentTime = currentTime.getTime();
-    let yesterdayTime = currentTime - offset_24_hours;
+    let yesterdayTime = currentTime - offset;
     yesterdayTime = new Date(yesterdayTime);
-    console.log(yesterdayTime);
+    let currentIsoString = yesterdayTime.toISOString();
+    let lastColonIndex = currentIsoString.lastIndexOf('.');
+    let formattedTime = currentIsoString.substring(0, lastColonIndex) + 'Z';
+    return formattedTime;
+}
+
+export const getRainfall = async function(hours){
+    hours = parseInt(hours);
     let station = 'KBIV';
     let office = 'grr'
-    console.log(yesterdayTime);
-    let currentIsoString = yesterdayTime.toISOString();
-    console.log('hiiiii', formatedTime);
-    // 2021-06-23T01:50:07.531Z
-    // 2020-05-14T05:40:08Z
-    // 2021-06-23T01:50:07Z
-    // 2020-05-14T14:40:08Z
-    // let weatherURL = `https://api.weather.gov/alerts?start=${formatedTime}`
-    let weatherURL = `https://api.weather.gov/stations/${station}/observations?start=${formatedTime}`
-    const response = await fetch(weatherURL)
-    const observations = await response.json();
+
+    let formattedTime = getOffsetTime(offset_1_hour * hours);
+    let weatherURL = `https://api.weather.gov/stations/${station}/observations?start=${formattedTime}`
+    const response = await fetch(weatherURL);
+    const responseJson = await response.json();
+    let observations = responseJson.features;
+    // console.log('noodle: ', observations[0]);
+    let total = 0;
     for(let i = 0; i < observations.length; i++) {
-        // let 
+        let observation = observations[i];
+        let pastHourValue = observation.properties.precipitationLastHour.value;
+        if(pastHourValue !== null){
+            total += pastHourValue
+        }
     }
-    return posts;
+    // return posts;
+    return metersToInches(total);
 }
 
-const getIntervalInMiliseconds = (hours = 0, minutes = 0, seconds = 0) => {
-    let totalMileseconds = hours * 60 * 60 * 1000;
-    totalMileseconds += minutes * 60 * 1000;
-    totalMileseconds += seconds * 1000;
-
-    return totalMileseconds;
-}

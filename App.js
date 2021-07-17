@@ -1,7 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
+import 'react-native-gesture-handler';
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 import {getRainfall} from './services/weather';
+import HomeScreen from './screens/home';
+import { createStackNavigator } from '@react-navigation/stack';
 
 export default function App() {
   const pressRain = async () => {
@@ -9,15 +13,15 @@ export default function App() {
     console.log('testy: ', test);
   }
 
+  const Stack = createStackNavigator();
+
   return (
-    <View style={styles.container}>
-      <TouchableOpacity onPress={pressRain}>
-        <Text>
-        Get the Rain boi
-        </Text>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen name="Home" component={HomeScreen} />
+        {/* <Stack.Screen name="Details" component={DetailsScreen} /> */}
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
